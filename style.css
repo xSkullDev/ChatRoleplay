@@ -9,6 +9,7 @@
     --ai-msg: #242433;
 }
 
+/* MENGGUNAKAN dvh AGAR COCOK DENGAN KEYBOARD SAMSUNG */
 body {
     font-family: 'Segoe UI', Roboto, sans-serif;
     background-color: var(--bg-dark);
@@ -17,10 +18,11 @@ body {
     padding: 0;
     display: flex;
     height: 100vh;
+    height: 100dvh; /* Dynamic Viewport Height untuk Mobile */
     overflow: hidden;
 }
 
-/* SIDEBAR LAYOUT */
+/* SIDEBAR SYSTEM */
 .sidebar {
     width: 260px;
     background-color: var(--sidebar-bg);
@@ -29,7 +31,7 @@ body {
     flex-direction: column;
     padding: 20px;
     box-sizing: border-box;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logo { font-size: 20px; font-weight: bold; color: var(--accent-color); cursor: pointer; margin-bottom: 20px; }
@@ -42,127 +44,222 @@ body {
 .active-chat-item:hover, .active-chat-item.active { background: #222; }
 .active-chat-item img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
 
-/* MAIN CONTENT & VIEWS */
-.main-content { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; }
-.view { display: flex; flex-direction: column; height: 100%; padding: 30px; box-sizing: border-box; }
+/* MAIN CONTENT LAYOUT */
+.main-content { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    position: relative; 
+    width: 100%;
+    height: 100%;
+}
+
+.view { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+    padding: 25px; 
+    box-sizing: border-box; 
+}
+
 .view-header { display: flex; align-items: center; gap: 15px; }
 .view-header h1 { margin: 0 0 5px 0; font-size: 24px; }
 .view-header p { color: var(--text-muted); margin: 0; font-size: 14px; }
 
-/* MENU BUTTON (MOBILE ONLY BY DEFAULT) */
+/* HAMBURGER BUTTON */
 .menu-btn {
     display: none;
-    background: #222;
+    background: #1c1c24;
     border: 1px solid #333;
     color: white;
-    font-size: 20px;
-    padding: 8px 12px;
-    border-radius: 6px;
+    font-size: 22px;
+    padding: 6px 12px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
-/* OVERLAY FOR MOBILE */
+/* DARK OVERLAY FOR MOBILE */
 .sidebar-overlay {
     display: none;
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.7);
     z-index: 998;
+    backdrop-filter: blur(3px);
 }
 
-/* CHARACTER GRID */
+/* CHARACTER HUB GRID */
 .character-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 15px;
     overflow-y: auto;
     margin-top: 20px;
+    flex: 1;
 }
 
 .char-card { background: var(--bg-card); border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.2s; border: 1px solid #252538; }
-.char-card:hover { transform: translateY(-3px); }
 .char-card img { width: 100%; height: 140px; object-fit: cover; }
 .char-info { padding: 10px; }
-.char-info h3 { margin: 0 0 4px 0; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.char-info h3 { margin: 0 0 4px 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .char-info p { margin: 0; font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* CHAT ROOM */
-.chat-header { display: flex; align-items: center; gap: 10px; padding-bottom: 15px; border-bottom: 1px solid #222; }
-.back-btn, .clear-btn { background: none; border: 1px solid #444; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; }
-.clear-btn { border-color: var(--accent-color); color: var(--accent-color); font-size: 12px; padding: 6px 10px; }
+/* CHAT ROOM INTERFACE */
+.chat-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    padding-bottom: 12px; 
+    border-bottom: 1px solid #222; 
+}
 
-.chat-profile-trigger { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 6px; border-radius: 8px; transition: background 0.2s; flex: 1; }
+.back-btn, .clear-btn { 
+    background: #1c1c24; 
+    border: 1px solid #333; 
+    color: white; 
+    padding: 8px 12px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-size: 14px;
+    white-space: nowrap;
+}
+.clear-btn { border-color: rgba(255, 59, 48, 0.4); color: var(--accent-color); }
+
+/* CLICKABLE PROFIL PROFILE AREA */
+.chat-profile-trigger { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    cursor: pointer; 
+    padding: 6px; 
+    border-radius: 8px; 
+    transition: background 0.2s; 
+    flex: 1;
+    min-width: 0; /* Mencegah overflow teks di HP ramping */
+}
 .chat-profile-trigger:hover { background-color: #242433; }
 .chat-profile-trigger * { pointer-events: none; }
 
-#chatAvatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-.chat-bot-info h3 { margin: 0; font-size: 15px; }
-.chat-bot-info p { margin: 2px 0 0 0; font-size: 11px; color: var(--accent-color); }
+#chatAvatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.chat-bot-info { min-width: 0; }
+.chat-bot-info h3 { margin: 0; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-bot-info p { margin: 1px 0 0 0; font-size: 11px; color: var(--accent-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.chat-box { flex: 1; overflow-y: auto; padding: 20px 0; display: flex; flex-direction: column; gap: 15px; }
-.message { max-width: 80%; padding: 10px 14px; border-radius: 16px; line-height: 1.4; font-size: 15px; word-wrap: break-word; }
+/* CHAT MESSAGES STREAM */
+.chat-box { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 15px 0; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+}
+
+.message { max-width: 80%; padding: 10px 14px; border-radius: 16px; line-height: 1.4; font-size: 14px; word-wrap: break-word; }
 .user-message { background: var(--user-msg); align-self: flex-end; border-bottom-right-radius: 2px; }
 .ai-message { background: var(--ai-msg); align-self: flex-start; border-bottom-left-radius: 2px; }
 
-.input-area { display: flex; gap: 8px; padding-top: 15px; border-top: 1px solid #222; }
-.input-area input { flex: 1; padding: 12px 16px; background: #1c1c24; border: 1px solid #333; color: white; border-radius: 25px; outline: none; font-size: 14px; }
-.input-area button { padding: 0 20px; background: var(--accent-color); color: white; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 14px; }
-.loading { color: var(--text-muted); font-style: italic; font-size: 12px; display: none; }
+/* CHAT INPUT (OPTIMAL UNTUK JARI / SMARTPHONE) */
+.input-area { 
+    display: flex; 
+    gap: 8px; 
+    padding: 10px 0; 
+    border-top: 1px solid #222; 
+    background-color: var(--bg-dark);
+}
+.input-area input { 
+    flex: 1; 
+    padding: 12px 16px; 
+    background: #1c1c24; 
+    border: 1px solid #333; 
+    color: white; 
+    border-radius: 25px; 
+    outline: none; 
+    font-size: 14px; 
+}
+.input-area button { 
+    padding: 0 18px; 
+    background: var(--accent-color); 
+    color: white; 
+    border: none; 
+    border-radius: 25px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    font-size: 14px; 
+}
 
-/* MODALS */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1005; padding: 15px; box-sizing: border-box; }
-.modal-content { background: var(--bg-card); padding: 20px; border-radius: 12px; width: 100%; max-width: 420px; position: relative; border: 1px solid #333; max-height: 90vh; overflow-y: auto; }
-.close-modal { position: absolute; top: 12px; right: 18px; font-size: 22px; cursor: pointer; color: #aaa; }
+.loading { color: var(--text-muted); font-style: italic; font-size: 12px; padding-bottom: 5px; display: none; }
+
+/* RESPONSIVE MODALS */
+.modal { 
+    display: none; 
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.85); 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 1005; 
+    padding: 12px; 
+    box-sizing: border-box; 
+}
+.modal-content { 
+    background: var(--bg-card); 
+    padding: 20px; 
+    border-radius: 14px; 
+    width: 100%; 
+    max-width: 400px; 
+    position: relative; 
+    border: 1px solid #333; 
+    max-height: 85dvh; /* Batasi tinggi maksimal agar tidak tertutup keyboard HP */
+    overflow-y: auto;   /* Izinkan scroll di dalam modal jika layarnya pendek */
+}
+.close-modal { position: absolute; top: 12px; right: 18px; font-size: 24px; cursor: pointer; color: #aaa; }
 .form-group { margin-bottom: 12px; }
 .form-group label { display: block; margin-bottom: 4px; font-size: 13px; color: #ccc; }
-.form-group input, .form-group textarea { width: 100%; padding: 8px 12px; background: #2c2c3a; border: 1px solid #444; color: white; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 14px; }
+.form-group input, .form-group textarea { width: 100%; padding: 10px; background: #2c2c3a; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 14px; }
 
-/* TOMBOL MODAL EDIT & HAPUS */
 .modal-action-buttons { display: flex; gap: 10px; margin-top: 15px; }
-.btn-submit { flex: 1; padding: 12px; background: #007bff; border: none; color: white; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 14px; }
-.btn-delete { padding: 12px; background: #242433; border: 1px solid var(--accent-color); color: var(--accent-color); font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 14px; transition: background 0.2s; }
-.btn-delete:hover { background: var(--accent-color); color: white; }
+.btn-submit { flex: 1; padding: 12px; background: #007bff; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; }
+.btn-delete { padding: 12px; background: #242433; border: 1px solid var(--accent-color); color: var(--accent-color); font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 14px; }
 
-/* ==========================================
-   MEDIA QUERIES (RESPONSIVE STYLES)
-   ========================================== */
+/* ========================================================
+   MEDIA QUERIES KHUSUS HP (OPTIMAL UNTUK GALAXY A05s / 412px)
+   ======================================================== */
 @media (max-width: 768px) {
     .sidebar {
         position: fixed;
         left: 0; top: 0; bottom: 0;
-        transform: translateX(-100%); /* Sembunyikan sidebar ke kiri luar layar */
+        transform: translateX(-100%);
         z-index: 1000;
-        width: 260px;
+        width: 270px;
+        height: 100dvh;
     }
     
-    /* Ketika sidebar aktif (dibuka via hamburger) */
-    .sidebar.active {
-        transform: translateX(0);
-    }
+    .sidebar.active { transform: translateX(0); }
+    .sidebar-overlay.active { display: block; }
+    .menu-btn { display: block; }
     
-    .sidebar-overlay.active {
-        display: block;
-    }
+    .view { padding: 15px; }
+    .view-header h1 { font-size: 20px; }
+    .view-header p { font-size: 12px; }
     
-    .menu-btn {
-        display: block; /* Munculkan tombol hamburger di HP */
-    }
-    
-    .view {
-        padding: 15px; /* Perkecil padding di HP agar layar maksimal */
-    }
-    
-    .view-header h1 {
-        font-size: 20px;
-    }
-    
+    /* Grid Menyesuaikan Kerapatan Layar Galaxy A05s */
     .character-grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); /* Grid lebih padat di HP */
+        grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
         gap: 10px;
+        margin-top: 15px;
     }
     
-    .message {
-        max-width: 85%; /* Balon chat melebar sedikit di HP */
-        font-size: 14px;
-    }
+    /* Penyesuaian Header Chat di HP */
+    .chat-header { gap: 8px; padding-bottom: 10px; }
+    .back-btn { padding: 6px 10px; }
+    .clear-btn { font-size: 11px; padding: 6px 8px; }
+    #chatAvatar { width: 34px; height: 34px; }
+    .chat-bot-info h3 { font-size: 13px; }
+    
+    .message { max-width: 85%; font-size: 14px; padding: 9px 12px; }
+    
+    /* Mencegah Input melenceng saat keyboard muncul */
+    .input-area { padding: 8px 0; }
+    .input-area input { padding: 10px 14px; font-size: 14px; }
 }

@@ -34,12 +34,9 @@ function initApp() {
     renderSidebarChats();
 }
 
-// LOGIKA RESPONSIF SIDEBAR TOGGLE
 function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    sidebar.classList.toggle('active');
-    overlay.classList.toggle('active');
+    document.getElementById('sidebar').classList.toggle('active');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
 }
 
 function closeSidebarOnMobile() {
@@ -50,7 +47,7 @@ function closeSidebarOnMobile() {
 function showView(viewId) {
     document.getElementById('hub-view').style.display = viewId === 'hub-view' ? 'block' : 'none';
     document.getElementById('chat-view').style.display = viewId === 'chat-view' ? 'flex' : 'none';
-    closeSidebarOnMobile(); // Otomatis tutup sidebar setelah memilih menu di HP
+    closeSidebarOnMobile();
 }
 
 function renderHub() {
@@ -78,17 +75,13 @@ function renderSidebarChats() {
 
     characters.forEach(char => {
         const chatHistoryKey = `chat_history_${char.id}`;
-        const hasHistory = localStorage.getItem(chatHistoryKey);
-        
-        if (hasHistory) {
+        if (localStorage.getItem(chatHistoryKey)) {
             const item = document.createElement('div');
             item.className = `active-chat-item ${currentCharacterId === char.id ? 'active' : ''}`;
             item.onclick = () => startChat(char.id);
             item.innerHTML = `
                 <img src="${char.avatar}" onerror="this.src='https://placehold.co/400x400?text=AI'">
-                <div>
-                    <div style="font-weight:bold; font-size:14px;">${char.name}</div>
-                </div>
+                <div><div style="font-weight:bold; font-size:14px;">${char.name}</div></div>
             `;
             list.appendChild(item);
         }
@@ -105,7 +98,6 @@ function startChat(charId) {
 
     const chatHistoryKey = `chat_history_${charId}`;
     let history = localStorage.getItem(chatHistoryKey);
-    
     const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '';
 
@@ -114,10 +106,7 @@ function startChat(charId) {
         localStorage.setItem(chatHistoryKey, JSON.stringify(initialHistory));
         addMessageToUI(char.greeting, false);
     } else {
-        const parsedHistory = JSON.parse(history);
-        parsedHistory.forEach(msg => {
-            addMessageToUI(msg.content, msg.role === 'user');
-        });
+        JSON.parse(history).forEach(msg => addMessageToUI(msg.content, msg.role === 'user'));
     }
 
     renderSidebarChats();
@@ -144,7 +133,6 @@ async function sendMessage() {
         return;
     }
     localStorage.setItem('rp_groq_key', apiKeyInput);
-
     if (!userMessage || !currentCharacterId) return;
 
     const char = characters.find(c => c.id === currentCharacterId);
@@ -154,43 +142,28 @@ async function sendMessage() {
     addMessageToUI(userMessage, true);
     userInputBox.value = '';
     loadingIndicator.style.display = 'block';
-
     history.push({ role: "user", content: userMessage });
-
-    const messagesPayload = [
-        { role: "system", content: char.systemPrompt },
-        ...history
-    ];
 
     try {
         const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKeyInput}`,
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Authorization': `Bearer ${apiKeyInput}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 model: "llama-3.1-8b-instant",
-                messages: messagesPayload,
-                temperature: 0.8,
-                max_tokens: 1024
+                messages: [{ role: "system", content: char.systemPrompt }, ...history],
+                temperature: 0.8, max_tokens: 1024
             })
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || "Terjadi kendala koneksi API.");
-        }
-
+        if (!response.ok) throw new Error("Koneksi API bermasalah.");
         const data = await response.json();
         const aiResponse = data.choices[0].message.content;
 
         addMessageToUI(aiResponse, false);
         history.push({ role: "assistant", content: aiResponse });
         localStorage.setItem(chatHistoryKey, JSON.stringify(history));
-
     } catch (error) {
-        addMessageToUI(`Sistem Error: ${error.message}`, false);
+        addMessageToUI(`Error: ${error.message}`, false);
     } finally {
         loadingIndicator.style.display = 'none';
         renderSidebarChats();
@@ -198,7 +171,7 @@ async function sendMessage() {
 }
 
 function clearCurrentChat() {
-    if (currentCharacterId && confirm("Hapus semua riwayat percakapan dengan karakter ini?")) {
+    if (currentCharacterId && confirm("Hapus semua riwayat percakapan?")) {
         localStorage.removeItem(`chat_history_${currentCharacterId}`);
         startChat(currentCharacterId);
     }
@@ -213,28 +186,12 @@ function saveNewCharacter() {
     const greeting = document.getElementById('newBotGreeting').value.trim();
     const systemPrompt = document.getElementById('newBotPrompt').value.trim();
 
-    if (!name || !greeting || !systemPrompt) {
-        alert("Mohon isi semua form!");
-        return;
-    }
-
+    if (!name || !greeting || !systemPrompt) return alert("Mohon isi semua form!");
     if (!avatar) avatar = "https://placehold.co/400x400?text=" + name;
 
-    const newChar = {
-        id: "char_" + Date.now(),
-        name: name,
-        avatar: avatar,
-        greeting: greeting,
-        systemPrompt: systemPrompt
-    };
-
-    characters.push(newChar);
+    characters.push({ id: "char_" + Date.now(), name, avatar, greeting, systemPrompt });
     localStorage.setItem('rp_characters', JSON.stringify(characters));
     
-    document.getElementById('newBotName').value = '';
-    document.getElementById('newBotAvatar').value = '';
-    document.getElementById('newBotGreeting').value = '';
-    document.getElementById('newBotPrompt').value = '';
     closeCreateModal();
     renderHub();
 }
@@ -255,76 +212,42 @@ function closeEditModal() { document.getElementById('editModal').style.display =
 
 function saveUpdatedCharacter() {
     if (!currentCharacterId) return;
-
     const name = document.getElementById('editBotName').value.trim();
     let avatar = document.getElementById('editBotAvatar').value.trim();
     const greeting = document.getElementById('editBotGreeting').value.trim();
     const systemPrompt = document.getElementById('editBotPrompt').value.trim();
 
-    if (!name || !greeting || !systemPrompt) {
-        alert("Form tidak boleh kosong!");
-        return;
-    }
-
+    if (!name || !greeting || !systemPrompt) return alert("Form tidak boleh kosong!");
     if (!avatar) avatar = "https://placehold.co/400x400?text=" + name;
 
-    const charIndex = characters.findIndex(c => c.id === currentCharacterId);
-    if (charIndex !== -1) {
-        characters[charIndex].name = name;
-        characters[charIndex].avatar = avatar;
-        characters[charIndex].greeting = greeting;
-        characters[charIndex].systemPrompt = systemPrompt;
-
+    const idx = characters.findIndex(c => c.id === currentCharacterId);
+    if (idx !== -1) {
+        characters[idx] = { ...characters[idx], name, avatar, greeting, systemPrompt };
         localStorage.setItem('rp_characters', JSON.stringify(characters));
         
         document.getElementById('chatBotName').textContent = name;
         document.getElementById('chatAvatar').src = avatar;
-
         renderHub();
         renderSidebarChats();
         closeEditModal();
     }
 }
 
-// ==========================================
-// FITUR BARU: HAPUS KARAKTER SECARA PERMANEN
-// ==========================================
 function deleteCurrentCharacter() {
     if (!currentCharacterId) return;
-
     const char = characters.find(c => c.id === currentCharacterId);
-    if (!char) return;
-
-    const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus karakter "${char.name}"? Semua riwayat chat dengan karakter ini juga akan dihapus permanen.`);
-    
-    if (konfirmasi) {
-        // 1. Bersihkan riwayat chat dari LocalStorage
+    if (char && confirm(`Hapus permanen "${char.name}"?`)) {
         localStorage.removeItem(`chat_history_${currentCharacterId}`);
-
-        // 2. Filter array characters untuk membuang karakter saat ini
         characters = characters.filter(c => c.id !== currentCharacterId);
-
-        // 3. Simpan perubahan ke LocalStorage
         localStorage.setItem('rp_characters', JSON.stringify(characters));
-
-        // 4. Reset state karakter aktif
         currentCharacterId = null;
-
-        // 5. Tutup modal & kembalikan tampilan ke Hub Utama
         closeEditModal();
         showView('hub-view');
-
-        // 6. Segarkan komponen UI
         renderHub();
         renderSidebarChats();
-
-        alert("Karakter berhasil dihapus.");
     }
 }
 
 document.getElementById('sendBtn').addEventListener('click', sendMessage);
-document.getElementById('userInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendMessage();
-});
-
+document.getElementById('userInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 window.onload = initApp;
