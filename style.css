@@ -316,3 +316,22 @@ body {
     border-radius: 6px;
     cursor: pointer;
 }
+
+/* EFEK HOVER UNTUK FITUR EDIT PROFIL */
+.chat-profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.chat-profile-trigger:hover {
+    background-color: #242433;
+}
+
+.chat-profile-trigger:active {
+    transform: scale(0.98);
+}

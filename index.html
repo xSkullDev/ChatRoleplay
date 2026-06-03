@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrushOn AI Clone (Vanilla)</title>
+    <title>CrushOn AI Clone (Vanilla) - Edit Feature</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -36,11 +36,15 @@
         <section id="chat-view" class="view" style="display: none;">
             <div class="chat-header">
                 <button class="back-btn" onclick="showView('hub-view')">← Kembali</button>
-                <img id="chatAvatar" src="" alt="Avatar">
-                <div class="chat-bot-info">
-                    <h3 id="chatBotName">Nama Bot</h3>
-                    <p id="chatBotTitle">Deskripsi singkat</p>
+                
+                <div class="chat-profile-trigger" onclick="openEditModal()" title="Klik untuk edit profil karakter">
+                    <img id="chatAvatar" src="" alt="Avatar">
+                    <div class="chat-bot-info">
+                        <h3 id="chatBotName">Nama Bot</h3>
+                        <p id="chatBotTitle">Roleplay Active 📝 (Klik untuk Edit)</p>
+                    </div>
                 </div>
+
                 <button class="clear-btn" onclick="clearCurrentChat()">Hapus Chat</button>
             </div>
 
@@ -74,9 +78,33 @@
             </div>
             <div class="form-group">
                 <label>Prompt Sistem / Kepribadian (Sifat & Latar Belakang)</label>
-                <textarea id="newBotPrompt" rows="4" placeholder="Kamu adalah Hutao dari Genshin Impact. Sifatmu ceria, jahil, dan suka berpuisi tentang kematian..."></textarea>
+                <textarea id="newBotPrompt" rows="4" placeholder="Kamu adalah Hutao dari Genshin Impact..."></textarea>
             </div>
             <button class="btn-submit" onclick="saveNewCharacter()">Buat & Simpan</button>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Profil Karakter</h2>
+            <div class="form-group">
+                <label>Nama Karakter</label>
+                <input type="text" id="editBotName">
+            </div>
+            <div class="form-group">
+                <label>URL Gambar Avatar</label>
+                <input type="text" id="editBotAvatar">
+            </div>
+            <div class="form-group">
+                <label>Pesan Pembuka (Greeting)</label>
+                <input type="text" id="editBotGreeting">
+            </div>
+            <div class="form-group">
+                <label>Prompt Sistem / Kepribadian (Sifat & Latar Belakang)</label>
+                <textarea id="editBotPrompt" rows="4"></textarea>
+            </div>
+            <button class="btn-submit" onclick="saveUpdatedCharacter()">Simpan Perubahan</button>
         </div>
     </div>
 
