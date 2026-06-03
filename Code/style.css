@@ -1,0 +1,129 @@
+:root {
+    --primary-bg: #f4f4f9;
+    --chat-bg: #ffffff;
+    --user-msg: #007bff;
+    --ai-msg: #e5e5ea;
+    --text-dark: #333;
+    --text-light: #fff;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--primary-bg);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 600px;
+    background: var(--chat-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    overflow: hidden;
+}
+
+.header {
+    padding: 20px;
+    background: var(--text-dark);
+    color: var(--text-light);
+    text-align: center;
+}
+
+.header h2 {
+    margin: 0;
+}
+
+.settings {
+    padding: 15px;
+    background: #eee;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.settings input, .settings textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.chat-box {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 15px;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background: var(--user-msg);
+    color: var(--text-light);
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+.ai-message {
+    background: var(--ai-msg);
+    color: var(--text-dark);
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+.input-area {
+    padding: 15px;
+    background: var(--chat-bg);
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+}
+
+.input-area button {
+    padding: 10px 20px;
+    background: var(--user-msg);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.input-area button:hover {
+    background: #0056b3;
+}
+
+.loading {
+    align-self: flex-start;
+    color: #888;
+    font-style: italic;
+    font-size: 0.9em;
+    display: none;
+    padding: 0 20px 10px 20px;
+}

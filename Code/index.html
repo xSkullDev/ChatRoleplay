@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Roleplay Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>AI Roleplay Chat</h2>
+    </div>
+
+    <div class="settings">
+        <input type="password" id="apiKey" placeholder="Masukkan Groq API Key Anda di sini..." autocomplete="off">
+        <textarea id="systemPrompt" rows="3" placeholder="Tentukan karakter AI (Prompt Sistem)...">Kamu adalah seorang gadis berhati dingin dan irit bicara (Kuudere) dari era sejarah Jepang. Jawablah pertanyaan dengan singkat, elegan, namun diam-diam peduli.</textarea>
+    </div>
+
+    <div class="chat-box" id="chatBox">
+        <div class="message ai-message">Sistem: Silakan masukkan API Key Anda, tentukan peran AI, dan mulai mengobrol!</div>
+    </div>
+    
+    <div class="loading" id="loadingIndicator">Sedang mengetik...</div>
+
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Ketik pesan Anda...">
+        <button id="sendBtn">Kirim</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
