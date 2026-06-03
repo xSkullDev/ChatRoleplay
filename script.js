@@ -4,7 +4,7 @@ const defaultCharacters = [
         name: "Aiko Yamamoto",
         avatar: "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=400&auto=format&fit=crop",
         greeting: "Ada keperluan apa mencariku? Katakan dengan cepat, aku sedang sibuk.",
-        systemPrompt: "Kamu adalah Aiko Yamamoto, seorang gadis Kuudere (dingin di luar, peduli di dalam) dari era sejarah Jepang. Bicaramu sangat irit, formal, tajam namun elegan. Sembunyikan perasaan pedulimu di balik kalimat ketusmu."
+        systemPrompt: "Kamu adalah Aiko Yamamoto, seorang gadis Kuudere dari era sejarah Jepang. Bicaramu sangat irit, formal, tajam namun elegan. Sembunyikan perasaan pedulimu di balik kalimat ketusmu."
     },
     {
         id: "char_2",
@@ -34,9 +34,23 @@ function initApp() {
     renderSidebarChats();
 }
 
+// LOGIKA RESPONSIF SIDEBAR TOGGLE
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+function closeSidebarOnMobile() {
+    document.getElementById('sidebar').classList.remove('active');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+}
+
 function showView(viewId) {
     document.getElementById('hub-view').style.display = viewId === 'hub-view' ? 'block' : 'none';
     document.getElementById('chat-view').style.display = viewId === 'chat-view' ? 'flex' : 'none';
+    closeSidebarOnMobile(); // Otomatis tutup sidebar setelah memilih menu di HP
 }
 
 function renderHub() {
@@ -84,6 +98,7 @@ function renderSidebarChats() {
 function startChat(charId) {
     currentCharacterId = charId;
     const char = characters.find(c => c.id === charId);
+    if (!char) return;
     
     document.getElementById('chatBotName').textContent = char.name;
     document.getElementById('chatAvatar').src = char.avatar;
@@ -189,7 +204,7 @@ function clearCurrentChat() {
     }
 }
 
-function openCreateModal() { document.getElementById('createModal').style.display = 'flex'; }
+function openCreateModal() { document.getElementById('createModal').style.display = 'flex'; closeSidebarOnMobile(); }
 function closeCreateModal() { document.getElementById('createModal').style.display = 'none'; }
 
 function saveNewCharacter() {
@@ -224,10 +239,8 @@ function saveNewCharacter() {
     renderHub();
 }
 
-// LOGIKA EDIT MODAL (FIXED)
 function openEditModal() {
     if (!currentCharacterId) return;
-    
     const char = characters.find(c => c.id === currentCharacterId);
     if (!char) return;
 
@@ -235,13 +248,10 @@ function openEditModal() {
     document.getElementById('editBotAvatar').value = char.avatar;
     document.getElementById('editBotGreeting').value = char.greeting;
     document.getElementById('editBotPrompt').value = char.systemPrompt;
-
     document.getElementById('editModal').style.display = 'flex';
 }
 
-function closeEditModal() {
-    document.getElementById('editModal').style.display = 'none';
-}
+function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
 
 function saveUpdatedCharacter() {
     if (!currentCharacterId) return;
@@ -252,14 +262,13 @@ function saveUpdatedCharacter() {
     const systemPrompt = document.getElementById('editBotPrompt').value.trim();
 
     if (!name || !greeting || !systemPrompt) {
-        alert("Form nama, greeting, dan prompt tidak boleh kosong!");
+        alert("Form tidak boleh kosong!");
         return;
     }
 
     if (!avatar) avatar = "https://placehold.co/400x400?text=" + name;
 
     const charIndex = characters.findIndex(c => c.id === currentCharacterId);
-    
     if (charIndex !== -1) {
         characters[charIndex].name = name;
         characters[charIndex].avatar = avatar;
@@ -273,9 +282,43 @@ function saveUpdatedCharacter() {
 
         renderHub();
         renderSidebarChats();
-        
         closeEditModal();
-        alert("Profil karakter berhasil diperbarui!");
+    }
+}
+
+// ==========================================
+// FITUR BARU: HAPUS KARAKTER SECARA PERMANEN
+// ==========================================
+function deleteCurrentCharacter() {
+    if (!currentCharacterId) return;
+
+    const char = characters.find(c => c.id === currentCharacterId);
+    if (!char) return;
+
+    const konfirmasi = confirm(`Apakah Anda yakin ingin menghapus karakter "${char.name}"? Semua riwayat chat dengan karakter ini juga akan dihapus permanen.`);
+    
+    if (konfirmasi) {
+        // 1. Bersihkan riwayat chat dari LocalStorage
+        localStorage.removeItem(`chat_history_${currentCharacterId}`);
+
+        // 2. Filter array characters untuk membuang karakter saat ini
+        characters = characters.filter(c => c.id !== currentCharacterId);
+
+        // 3. Simpan perubahan ke LocalStorage
+        localStorage.setItem('rp_characters', JSON.stringify(characters));
+
+        // 4. Reset state karakter aktif
+        currentCharacterId = null;
+
+        // 5. Tutup modal & kembalikan tampilan ke Hub Utama
+        closeEditModal();
+        showView('hub-view');
+
+        // 6. Segarkan komponen UI
+        renderHub();
+        renderSidebarChats();
+
+        alert("Karakter berhasil dihapus.");
     }
 }
 
