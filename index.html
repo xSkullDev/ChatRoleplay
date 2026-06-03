@@ -3,33 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Roleplay Chat</title>
+    <title>CrushOn AI Clone (Vanilla)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h2>AI Roleplay Chat</h2>
+    <aside class="sidebar">
+        <div class="logo" onclick="showView('hub-view')">✨ CrushOn Vanilla</div>
+        
+        <div class="api-section">
+            <input type="password" id="apiKey" placeholder="Masukkan Groq API Key..." autocomplete="off">
+        </div>
+
+        <button class="btn-create" onclick="openCreateModal()">+ Buat Karakter</button>
+
+        <div class="sidebar-title">Chat Aktif</div>
+        <div class="active-chats" id="activeChatsList">
+            </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <section id="hub-view" class="view">
+            <div class="view-header">
+                <h1>Jelajahi Karakter</h1>
+                <p>Pilih karakter yang ingin kamu ajak *roleplay* atau buat karaktermu sendiri.</p>
+            </div>
+            <div class="character-grid" id="characterGrid">
+                </div>
+        </section>
+
+        <section id="chat-view" class="view" style="display: none;">
+            <div class="chat-header">
+                <button class="back-btn" onclick="showView('hub-view')">← Kembali</button>
+                <img id="chatAvatar" src="" alt="Avatar">
+                <div class="chat-bot-info">
+                    <h3 id="chatBotName">Nama Bot</h3>
+                    <p id="chatBotTitle">Deskripsi singkat</p>
+                </div>
+                <button class="clear-btn" onclick="clearCurrentChat()">Hapus Chat</button>
+            </div>
+
+            <div class="chat-box" id="chatBox">
+                </div>
+
+            <div class="loading" id="loadingIndicator">Sedang mengetik...</div>
+
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="Ketik pesan pesan roleplay-mu di sini...">
+                <button id="sendBtn">Kirim</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCreateModal()">&times;</span>
+            <h2>Buat Karakter Baru</h2>
+            <div class="form-group">
+                <label>Nama Karakter</label>
+                <input type="text" id="newBotName" placeholder="Contoh: Hutao">
+            </div>
+            <div class="form-group">
+                <label>URL Gambar Avatar</label>
+                <input type="text" id="newBotAvatar" placeholder="https://link-gambar.com/avatar.jpg">
+            </div>
+            <div class="form-group">
+                <label>Pesan Pembuka (Greeting)</label>
+                <input type="text" id="newBotGreeting" placeholder="Halo! Ada yang bisa kubantu hari ini?">
+            </div>
+            <div class="form-group">
+                <label>Prompt Sistem / Kepribadian (Sifat & Latar Belakang)</label>
+                <textarea id="newBotPrompt" rows="4" placeholder="Kamu adalah Hutao dari Genshin Impact. Sifatmu ceria, jahil, dan suka berpuisi tentang kematian..."></textarea>
+            </div>
+            <button class="btn-submit" onclick="saveNewCharacter()">Buat & Simpan</button>
+        </div>
     </div>
 
-    <div class="settings">
-        <input type="password" id="apiKey" placeholder="Masukkan Groq API Key Anda di sini..." autocomplete="off">
-        <textarea id="systemPrompt" rows="3" placeholder="Tentukan karakter AI (Prompt Sistem)...">Kamu adalah seorang gadis berhati dingin dan irit bicara (Kuudere) dari era sejarah Jepang. Jawablah pertanyaan dengan singkat, elegan, namun diam-diam peduli.</textarea>
-    </div>
-
-    <div class="chat-box" id="chatBox">
-        <div class="message ai-message">Sistem: Silakan masukkan API Key Anda, tentukan peran AI, dan mulai mengobrol!</div>
-    </div>
-    
-    <div class="loading" id="loadingIndicator">Sedang mengetik...</div>
-
-    <div class="input-area">
-        <input type="text" id="userInput" placeholder="Ketik pesan Anda...">
-        <button id="sendBtn">Kirim</button>
-    </div>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
